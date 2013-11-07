@@ -1,5 +1,8 @@
 ;; sort imports
 
+;; inspired by Leonard Ehrenfried setup for vim:
+;; http://leonard.io/blog/2013/04/editing-scala-with-vim/
+
 (defvar si-group-keys '(:other :stdlib :own))
 (defvar si-preamble-regex "^package ")
 (defvar si-import-line-regex "^import ")
