@@ -249,6 +249,3 @@ import java.util.List
 import scala.util.Try
 
 def greeting = 42")))
-
-
-(ert t)
