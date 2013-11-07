@@ -52,6 +52,8 @@
         (while (si-looking-at-empty-line-p) (forward-line -1))
         (unless (eobp) (delete-blank-lines) (forward-line 1) (newline))))))
 
+(provide 'sort-imports)
+
 ;; tests
 
 (defun si-test-with-buffer-string (buffer-string)
