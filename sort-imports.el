@@ -17,22 +17,30 @@
         (t
          :other)))
 
+(defun si-get-import-lines (all-lines)
+  (with-temp-buffer
+    (insert all-lines)
+    (goto-char (point-min))
+    (keep-lines si-import-line-regex (point-min) (point-max))
+    (buffer-substring (point-min) (point-max))))
+
+(defun si-construct-imports-string (import-groups)
+  (with-temp-buffer
+    (-each si-group-keys
+           (lambda (group-key)
+             (let* ((group-imports (cdr (assoc group-key import-groups)))
+                    (sorted-import-group (-sort 'string< group-imports)))
+               (when sorted-import-group
+                 (insert (s-join "\n" sorted-import-group))
+                 (insert "\n\n")))))
+    (buffer-substring (point-min) (point-max))))
+
 (defun si-get-sorted-imports ()
-  (let ((full-buffer-contents (buffer-substring-no-properties (point-min) (point-max))))
-    (with-temp-buffer
-            (insert full-buffer-contents)
-            (goto-char (point-min))
-            (keep-lines si-import-line-regex (point-min) (point-max))
-            (let* ((import-lines (s-split "\n" (filter-buffer-substring (point-min) (point-max) t) t))
-                   (import-groups (-group-by (lambda (line) (si-group-for-import line)) import-lines)))
-              (-each si-group-keys
-                     (lambda (group-key)
-                       (let* ((group-imports (cdr (assoc group-key import-groups)))
-                              (sorted-import-group (-sort 'string< group-imports)))
-                         (when sorted-import-group
-                           (insert (s-join "\n" sorted-import-group))
-                           (insert "\n\n"))))))
-            (buffer-substring (point-min) (point-max)))))
+  (let* ((full-buffer-contents (buffer-substring-no-properties (point-min) (point-max)))
+         (import-lines-string (si-get-import-lines full-buffer-contents))
+         (import-lines (s-split "\n" import-lines-string t))
+         (import-groups (-group-by (lambda (line) (si-group-for-import line)) import-lines)))
+    (si-construct-imports-string import-groups)))
 
 (defun si-find-place-to-insert-sorted-imports ()
   (goto-char (point-min))
