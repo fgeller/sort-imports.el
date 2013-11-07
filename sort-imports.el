@@ -10,11 +10,9 @@
 (defun si-looking-at-empty-line-p () (looking-at-p "^$"))
 
 (defun si-group-for-import (import-line)
-  (message "compare line [%s] to own regex [%s]" import-line si-own-regex)
   (cond ((s-matches? si-stdlib-regex line)
          :stdlib)
         ((and si-own-regex (s-matches? si-own-regex line))
-         (message "matched own")
          :own)
         (t
          :other)))
